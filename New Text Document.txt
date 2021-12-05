@@ -1,0 +1,172 @@
+<div class="form-group row">
+							        <div class="col-md-6 wrap-left">
+								       	<div class="default-select" id="default-select">
+											<select name="arrive_dropdown" required="required">
+												<option value="none" disabled selected>Arriving at</option>
+												
+												<%
+												
+												Date dateee = new Date();
+											    String strDateFormatttt = "HH:mm";
+											    DateFormat dateFormatttt = new SimpleDateFormat(strDateFormatttt);
+											    String formattedDateeee= dateFormatttt.format(dateee);
+											    String[] splitDate=formattedDateeee.split(":");
+											    int hourr=Integer.parseInt(splitDate[0]);
+											    int minn=Integer.parseInt(splitDate[1]);
+
+											    int first=1;
+											    while(hourr<=24){
+											    	
+											    	if(first==1){
+											    		if(minn<30){
+												    		out.println("<option value="+hourr+":30:00"+">"+hourr+":30"+"</option>");
+												    		out.println("<option value="+hourr+":00:00"+">"+hourr+":00"+"</option>");
+												    		first=30;
+												    	}else if(minn>=30){
+												    		hourr++;
+												    		out.println("<option value="+hourr+":00:00"+">"+hourr+":00"+"</option>");
+												    		out.println("<option value="+hourr+":30:00"+">"+hourr+":30"+"</option>");
+												    		first=0;
+												    	}
+											    		hourr++;
+											    		
+											    	}else if(first==0){
+											    		out.println("<option value="+hourr+":00:00"+">"+hourr+":00"+"</option>");
+												    	out.println("<option value="+hourr+":30:00"+">"+hourr+":30"+"</option>");
+												    	hourr++;
+											    	}else if(first==30){
+											    		out.println("<option value="+hourr+":30:00"+">"+hourr+":30"+"</option>");
+												    	out.println("<option value="+hourr+":00:00"+">"+hourr+":00"+"</option>");
+												    	hourr++;
+											    	}
+											    	
+											    	
+											    }    											
+											    
+												%>										
+												
+											</select>
+										</div>
+							        </div>
+							        <div class="col-md-6 wrap-right">
+										<div class="input-group dates-wrap">   
+										<!--                                        
+											<input name="datepicker" id="datepicker" class="dates form-control" id="exampleAmount" placeholder="Date" type="text">                        
+										--> 
+											<input type="text" readonly="readonly" style="color: #999999;height: 40px; border-radius: 4px; outline: none; border: none;" value=" Date : <% Date date= Calendar.getInstance().getTime(); DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy"); String today=formatter.format(date); out.print(today);  %>">											
+										</div>
+							        </div>
+							    </div>
+							    <div class="form-group row">
+							        <div class="col-md-6 wrap-left">
+								       	<div class="default-select" id="default-select">
+											<select name="leave_dropdown" required="required">
+												<option value="none" disabled selected>Leaving by</option>
+												<%
+
+												Date datee = new Date();
+											    String strDateFormattt = "hh:mm";
+											    DateFormat dateFormattt = new SimpleDateFormat(strDateFormattt);
+											    String formattedDateee= dateFormatttt.format(datee);
+											    String[] splitDatee=formattedDateee.split(":");
+											    int hour=Integer.parseInt(splitDatee[0]);
+											    int min=Integer.parseInt(splitDatee[1]);
+											    
+											    int second=1;
+											    hour=hour+1;
+											    while(hour<=24){
+											    	
+											    	if(second==1){
+											    		
+											    		if(min<30){
+												    		out.println("<option value="+hour+":30:00"+">"+hour+":30"+"</option>");
+												    		second=30;
+												    	}else if(min>=30){
+												    		hour+=1;
+												    		out.println("<option value="+hour+":00:00"+">"+hour+":00"+"</option>");
+												    		out.println("<option value="+hour+":30:00"+">"+hour+":30"+"</option>");
+												    		second=0;
+												    	}
+											    		hour++;
+											    		
+											    	}else if(second==0){
+											    		out.println("<option value="+hour+":00:00"+">"+hour+":00"+"</option>");
+												    	out.println("<option value="+hour+":30:00"+">"+hour+":30"+"</option>");
+												    	hour++;
+											    	}else if(second==30){
+											    		out.println("<option value="+hour+":30:00"+">"+hour+":30"+"</option>");
+												    	out.println("<option value="+hour+":00:00"+">"+hour+":00"+"</option>");
+												    	hour++;
+											    	}
+											    	
+											    	
+											    }
+											    
+											    while(hour<23){
+											    	if(min<30){
+											    		out.println("<option value="+hour+":30:00"+">"+hour+":30"+"</option>");
+											    		min=30;
+											    	}else if(min>30){
+											    		out.println("<option value="+hour+":00:00"+">"+hour+":00"+"</option>");
+											    		min=0;
+											    	}
+											    	hour=hour+1;
+											    	
+											    }    											
+											    
+												%>
+												
+											</select>
+										</div>
+									</div>
+							    </div>					    
+							 
+							    <div class="form-group row">
+							        <div class="col-md-12">
+							            <button type="submit" name="submit" class="btn btn-default btn-lg btn-block text-center text-uppercase">Show parking places</button>
+							        	<%
+							        	if (request.getParameter("submit")!=null)
+								        	{							        			
+							        			
+								        		///////////// Code to show available parking sections
+								        		String arrive=request.getParameter("arrive_dropdown");
+								        		String leave=request.getParameter("leave_dropdown");
+								        		
+								        		String place=request.getParameter("placetopark");
+								        		
+								        		if((arrive.equals("none"))||(leave.equals("none")))
+								        		{
+								        			out.println("<script type=\"text/javascript\">");
+								        			out.println("alert('Please fill all fields!');");
+								        			out.println("location.reload();");
+									        		out.println("</script>");
+								        		}
+								        		else
+								        		{
+								        			if(arrive.equals(leave)){
+								        				out.print("<script>alert('There is error in time');</script>");
+								        			}else{
+								        				CompareTime compareTime=new CompareTime();
+									        			int res=compareTime.compare(arrive, leave);
+									        			if(res!=1){
+									        				
+									        				session.setAttribute("place", place);
+											        		session.setAttribute("arrive", arrive);
+											        		session.setAttribute("leave", leave);	
+											        		
+											        		out.println("<script type=\"text/javascript\">");
+											        		out.println("location='http://localhost:8082/ParkIt/searchpage.jsp';");
+											        		out.println("</script>");
+											        		
+									        			}else{
+									        				out.print("<script>alert('There is error in time');</script>");
+									        			}
+								        			}
+	
+								        		}
+							        		
+								        	}						        	
+							        	
+							        	
+							        	%>
+							        </div>
